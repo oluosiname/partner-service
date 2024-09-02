@@ -38,9 +38,37 @@ RSpec.describe Partner, type: :model do
       it 'sets the location point' do
         expect do
           partner.save
-        end.to change(partner, :location).from(nil)
+        end.to change(partner, :location).from(nil).to(be_a(RGeo::Geographic::SphericalPointImpl))
+      end
+    end
+  end
 
-        expect(partner).to have_received(:set_location_point)
+  describe 'scopes' do
+    describe '.within_radius' do
+      let!(:partner_within_radius) do
+        create(:partner, latitude: 52.5208, longitude: 13.4095, operating_radius: 20)
+        # Alexanderplatz, Berlin
+      end
+
+      let!(:partner_outside_radius) do
+        create(:partner, latitude: 52.5208, longitude: 13.4095, operating_radius: 0.5)
+        # Alexanderplatz, Berlin
+      end
+
+      let!(:point_within_radius) { [13.4028, 52.5233] } # Hackescher Markt, Berlin
+      let!(:point_outside_radius) { [7.7215, 48.2660] } # Europa Park Rust
+
+      it 'returns partners within the specified radius' do
+        results = described_class.within_radius(*point_within_radius)
+
+        expect(results).to include(partner_within_radius)
+        expect(results).not_to include(partner_outside_radius)
+      end
+
+      it 'does not return partners outside the specified radius' do
+        results = described_class.within_radius(point_outside_radius[1], point_outside_radius[0])
+        expect(results).not_to include(partner_within_radius)
+        expect(results).not_to include(partner_outside_radius)
       end
     end
   end

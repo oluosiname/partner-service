@@ -9,6 +9,10 @@ class Partner < ApplicationRecord
   validates :operating_radius, presence: true, numericality: { greater_than: 0 }
   validates :rating, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }
 
+  scope :within_radius, ->(lon, lat) {
+    where('ST_DWithin(location, ST_MakePoint(?, ?)::geography, operating_radius * 1000)', lon, lat)
+  }
+
   private
 
   def set_location_point
