@@ -30,6 +30,9 @@ The Partner Matching API helps clients find partners who have experience with sp
 
 ```bash
 git clone git@github.com:oluosiname/partner-service.git
+```
+
+```bash
 cd partner-service
 ```
 
