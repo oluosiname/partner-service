@@ -38,6 +38,7 @@ gem 'bootsnap', require: false
 # gem "rack-cors"
 
 gem 'activerecord-postgis-adapter'
+gem 'active_model_serializers', '~> 0.10.0'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -51,6 +52,7 @@ group :development, :test do
   gem 'rubocop-shopify', require: false
   gem 'simplecov', require: false, group: :test
   gem 'shoulda-matchers'
+  gem 'pry-rails'
 end
 
 group :development do
