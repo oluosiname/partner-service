@@ -22,6 +22,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_204113) do
     t.index ["name"], name: "index_materials_on_name", unique: true
   end
 
+  create_table "partner_materials", force: :cascade do |t|
+    t.bigint "partner_id", null: false
+    t.bigint "material_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["material_id"], name: "index_partner_materials_on_material_id"
+    t.index ["partner_id", "material_id"], name: "index_partner_materials_on_partner_id_and_material_id", unique: true
+    t.index ["partner_id"], name: "index_partner_materials_on_partner_id"
+  end
+
   create_table "partners", force: :cascade do |t|
     t.string "name", null: false
     t.float "latitude", null: false
@@ -34,4 +44,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_204113) do
     t.index ["latitude", "longitude"], name: "index_partners_on_latitude_and_longitude"
     t.index ["location"], name: "index_partners_on_location", using: :gist
   end
+
+  add_foreign_key "partner_materials", "materials"
+  add_foreign_key "partner_materials", "partners"
 end

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Partner < ApplicationRecord
+  has_many :partner_materials, dependent: :destroy
+  has_many :materials, through: :partner_materials
+
   before_save :set_location_point
 
   validates :name, presence: true
@@ -8,10 +11,6 @@ class Partner < ApplicationRecord
   validates :longitude, presence: true, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
   validates :operating_radius, presence: true, numericality: { greater_than: 0 }
   validates :rating, presence: true, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 5 }
-
-  scope :within_radius, ->(lon, lat) {
-    where('ST_DWithin(location, ST_MakePoint(?, ?)::geography, operating_radius * 1000)', lon, lat)
-  }
 
   private
 

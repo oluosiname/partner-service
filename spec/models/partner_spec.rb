@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe Partner, type: :model do
+  let(:hakerscher_markt_coord) { { lat: 52.5233, lon: 13.4028 } }
+  let(:europa_park_rust_coord) { { lat: 48.2660, lon: 7.7215 } }
+  let(:tv_tower_berlin_coord) { { lat: 52.5208, lon: 13.4095 } }
+
+  describe 'associations' do
+    it { is_expected.to have_many(:partner_materials).dependent(:destroy) }
+    it { is_expected.to have_many(:materials).through(:partner_materials) }
+  end
+
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:latitude) }
@@ -46,17 +55,27 @@ RSpec.describe Partner, type: :model do
   describe 'scopes' do
     describe '.within_radius' do
       let!(:partner_within_radius) do
-        create(:partner, latitude: 52.5208, longitude: 13.4095, operating_radius: 20)
+        create(
+          :partner,
+          latitude: tv_tower_berlin_coord[:lat],
+          longitude: tv_tower_berlin_coord[:lon],
+          operating_radius: 20,
+        )
         # Alexanderplatz, Berlin
       end
 
       let!(:partner_outside_radius) do
-        create(:partner, latitude: 52.5208, longitude: 13.4095, operating_radius: 0.5)
+        create(
+          :partner,
+          latitude: tv_tower_berlin_coord[:lat],
+          longitude: tv_tower_berlin_coord[:lon],
+          operating_radius: 0.5,
+        )
         # Alexanderplatz, Berlin
       end
 
-      let!(:point_within_radius) { [13.4028, 52.5233] } # Hackescher Markt, Berlin
-      let!(:point_outside_radius) { [7.7215, 48.2660] } # Europa Park Rust
+      let!(:point_within_radius) { hakerscher_markt_coord.values } # Hackescher Markt, Berlin
+      let!(:point_outside_radius) { europa_park_rust_coord.values } # Europa Park Rust
 
       it 'returns partners within the specified radius' do
         results = described_class.within_radius(*point_within_radius)
