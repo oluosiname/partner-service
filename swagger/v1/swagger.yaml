@@ -67,7 +67,7 @@ components:
         rating:
           type: number
         operating_radius:
-          type: integer
+          type: number
         distance:
           type: number
         materials:

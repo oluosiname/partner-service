@@ -23,7 +23,7 @@ RSpec.configure do |config|
               latitude: { type: :number },
               longitude: { type: :number },
               rating: { type: :number },
-              operating_radius: { type: :integer },
+              operating_radius: { type: :number },
               distance: { type: :number },
               materials: {
                 type: :array,
