@@ -48,5 +48,32 @@ RSpec.describe 'Api::V1::Partners', type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.parsed_body).to be_empty
     end
+
+    context 'when required parameters are missing' do
+      it 'returns a bad request status if material is missing' do
+        get '/api/v1/partners', params: { lat: lat, lon: lon }
+
+        expect(response).to have_http_status(:bad_request)
+
+        json_response = response.parsed_body
+        expect(json_response['error']).to eq('Invalid request data')
+      end
+
+      it 'returns a bad request status if latitude is missing' do
+        get '/api/v1/partners', params: { material: 'wood', lon: lon }
+
+        expect(response).to have_http_status(:bad_request)
+
+        expect(response.parsed_body['error']).to eq('Invalid request data')
+      end
+
+      it 'returns a bad request status if longitude is missing' do
+        get '/api/v1/partners', params: { material: 'wood', lat: lat }
+
+        expect(response).to have_http_status(:bad_request)
+
+        expect(response.parsed_body['error']).to eq('Invalid request data')
+      end
+    end
   end
 end
