@@ -28,6 +28,9 @@ RSpec/MultipleMemoizedHelpers:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
+
+RSpec/EmptyExampleGroup:
+  Enabled: false
 Rspec/NamedSubject:
   Enabled: false
 Lint/MissingSuper:

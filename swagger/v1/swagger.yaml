@@ -1,0 +1,84 @@
+---
+openapi: 3.0.1
+info:
+  title: Partner Service API V1
+  version: v1
+paths:
+  "/api/v1/partners":
+    get:
+      summary: Retrieves a list of matching partners
+      tags:
+      - Partners
+      parameters:
+      - name: material
+        in: query
+        description: Materia for the floor
+        required: true
+        schema:
+          type: string
+      - name: lat
+        in: query
+        description: Latitude of the house Address
+        required: true
+        schema:
+          type: string
+      - name: lon
+        in: query
+        description: Longitude of the House Address
+        required: true
+        schema:
+          type: string
+      - name: square_meters
+        in: query
+        description: Square meters of the floor
+        required: false
+        schema:
+          type: string
+      - name: phone_number
+        in: query
+        description: Phone number for the partner to contact the customer
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: partners found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/partner"
+        '400':
+          description: invalid request
+components:
+  schemas:
+    partner:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        rating:
+          type: number
+        operating_radius:
+          type: integer
+        distance:
+          type: number
+        materials:
+          type: array
+          items:
+            "$ref": "#/components/schemas/material"
+    material:
+      type: object
+      properties:
+        name:
+          type: string
+servers:
+- url: http://localhost:3000
+  description: Development Server
