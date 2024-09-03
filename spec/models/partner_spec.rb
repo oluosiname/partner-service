@@ -90,5 +90,61 @@ RSpec.describe Partner, type: :model do
         expect(results).not_to include(partner_outside_radius)
       end
     end
+
+    describe '.with_experience_in' do
+      let(:partner_one) { create(:partner) }
+
+      let(:partner_two) { create(:partner) }
+
+      let(:wood) { create(:material, name: 'wood') }
+      let(:metal) { create(:material, name: 'metal') }
+
+      before do
+        partner_one.materials << wood
+        partner_two.materials << wood
+        partner_one.materials << metal
+      end
+
+      it 'returns partners with experience in the specified material' do
+        expect(described_class.with_experience_in('wood')).to include(partner_one)
+        expect(described_class.with_experience_in('wood')).to include(partner_two)
+
+        expect(described_class.with_experience_in('metal')).to include(partner_one)
+        expect(described_class.with_experience_in('metal')).not_to include(partner_two)
+      end
+    end
+  end
+
+  describe '.best_matches' do
+    let!(:partner_one) do
+      create(:partner, latitude: 52.5208, longitude: 13.4095, operating_radius: 20, rating: 4)
+      # Alexanderplatz, Berlin
+    end
+
+    let!(:partner_two) do
+      create(:partner, latitude: 52.5220, longitude: 13.4060, operating_radius: 18, rating: 5)
+      # closer location to Hackescher Markt, Berlin
+    end
+
+    let(:wood) { create(:material, name: 'wood') }
+    let(:metal) { create(:material, name: 'metal') }
+
+    before do
+      partner_one.materials << wood
+      partner_two.materials << wood
+      partner_one.materials << metal
+    end
+
+    it 'orders the partners by rating and distance' do
+      result = described_class.best_matches('wood', hakerscher_markt_coord[:lat], hakerscher_markt_coord[:lon])
+
+      expect(result).to eq([partner_two, partner_one])
+    end
+
+    it 'filters the partners by material experience' do
+      result = described_class.best_matches('metal', hakerscher_markt_coord[:lat], hakerscher_markt_coord[:lon])
+      expect(result).to include(partner_one)
+      expect(result).not_to include(partner_two)
+    end
   end
 end
